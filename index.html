@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Guide - FNV</title>
+    <style>
+        /* --- 全局样式 (保持品牌一致性) --- */
+        :root { --brand-color: #000000; --bg-color: #f4f6f8; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: var(--bg-color); color: #222; font-size: 18px; line-height: 1.5; }
+        
+        .container { max-width: 500px; margin: 0 auto; min-height: 80vh; display: flex; flex-direction: column; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .card-box { background: #fff; padding: 40px 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+        
+        .brand-logo-img { max-width: 180px; height: auto; display: block; margin: 0 auto 15px auto; }
+        .page-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; color: #111; }
+        .sub-text { color: #666; font-size: 1.1rem; margin-bottom: 35px; }
+
+        /* --- 按钮 A: 在线阅读 (白色背景) --- */
+        .btn-read {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            border: 2px solid #000;
+            background: #fff;
+            color: #000;
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-decoration: none;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-read:hover { background: #f0f0f0; transform: translateY(-2px); }
+
+        /* --- 按钮 B: 发送邮件 (黑色背景) --- */
+        .btn-email-trigger {
+            display: block;
+            width: 100%;
+            padding: 22px;
+            border: 2px solid #000;
+            background: #000;
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 800;
+            border-radius: 10px;
+            cursor: pointer;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+        .btn-email-trigger:hover { background: #333; transform: translateY(-2px); }
+
+        /* --- 隐藏的表单区域 --- */
+        #email-form-section {
+            display: none; /* 默认隐藏 */
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px dashed #ddd;
+            text-align: left;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+
+        label { display: block; font-weight: 700; font-size: 1.1rem; margin-bottom: 10px; }
+        
+        input { 
+            width: 100%; padding: 18px; border: 2px solid #ddd; border-radius: 10px; font-size: 18px; margin-bottom: 15px; box-sizing: border-box; color: #000 !important; opacity: 1; 
+        }
+        input:focus { border-color: #000; outline: none; }
+
+        .btn-send {
+            width: 100%; background: #000; color: #fff; padding: 18px; border: none; border-radius: 10px; font-size: 1.2rem; font-weight: 800; cursor: pointer;
+        }
+        .btn-send:disabled { opacity: 0.7; cursor: wait; }
+
+        /* --- 成功提示 --- */
+        #success-msg { display: none; margin-top: 20px; padding: 20px; background: #e8f5e9; border-radius: 10px; color: #1e7e34; font-weight: bold; }
+
+        .footer { text-align: center; margin-top: 30px; font-size: 0.9rem; color: #999; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card-box">
+        <!-- ⭐ 替换 Logo -->
+        <img src="https://cdn.shopify.com/s/files/1/0650/0755/0523/files/b71b98bbcc811df753e945a73abe0f0b_d39e7f05-6c92-4e1d-91c2-7589dcbc6eb4.png?v=1766453801" alt="FNV Atelier" class="brand-logo-img">
+        
+        <div class="page-title">User Manual</div>
+        <div class="sub-text">Select how you want to view the guide:</div>
+
+        <!-- 🟢 选项 A: 在线阅读 (直接打开 PDF) -->
+        <!-- ⭐ 替换 href 为您的 PDF 链接 -->
+        <a href="YOUR_PDF_LINK_HERE.pdf" target="_blank" class="btn-read">
+            📖 Read Online Now
+        </a>
+
+        <!-- 🔵 选项 B: 发送到邮箱 (触发隐藏表单) -->
+        <button class="btn-email-trigger" onclick="showForm()" id="triggerBtn">
+            📥 Email Me the PDF
+        </button>
+
+        <!-- 隐藏的表单 -->
+        <div id="email-form-section">
+            <label>Enter your email address:</label>
+            
+            <form onsubmit="submitManualForm(event)">
+                <input type="email" id="manual-email" placeholder="name@example.com" required
+                       oninvalid="this.setCustomValidity('Please enter a valid email address')"
+                       oninput="this.setCustomValidity('')">
+                <button type="submit" class="btn-send">SEND PDF</button>
+            </form>
+        </div>
+
+        <!-- 成功提示 -->
+        <div id="success-msg">
+            <div style="font-size: 2rem; margin-bottom: 10px;">✔ Sent!</div>
+            Please check your inbox.<br>The PDF is on its way.
+        </div>
+    </div>
+    
+    <div class="footer">&copy; 2026 FNV Atelier.</div>
+</div>
+
+<script>
+    // ⭐ 配置区域
+    const KLAVIYO_PUBLIC_KEY = 'WTnSbL';  // 您的 Public Key
+    const MANUAL_LIST_ID = 'Vr7vLj'; // 🔴 建议新建一个 List 放这里
+
+    function showForm() {
+        document.getElementById('email-form-section').style.display = 'block';
+        document.getElementById('triggerBtn').style.display = 'none'; // 隐藏大按钮
+    }
+
+    function submitManualForm(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('manual-email').value;
+        const btn = document.querySelector('.btn-send');
+        
+        btn.innerText = "SENDING...";
+        btn.disabled = true;
+
+        // ---------------------------------------------------------
+        // 1. 强制写入数据 (Pixel Mode) - 标记该用户请求了说明书
+        // ---------------------------------------------------------
+        const identifyData = {
+            "token": KLAVIYO_PUBLIC_KEY,
+            "properties": {
+                "$email": email,
+                "Requested_Manual": "True", // 标记用户行为
+                "Manual_Date": new Date().toISOString().split('T')[0]
+            }
+        };
+        const identifyEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(identifyData))));
+        new Image().src = `https://a.klaviyo.com/api/identify?data=${identifyEncoded}`;
+
+        // ---------------------------------------------------------
+        // 2. 加入列表 (No-CORS) - 触发发邮件流程
+        // ---------------------------------------------------------
+        const formData = new URLSearchParams();
+        formData.append('g', MANUAL_LIST_ID);
+        formData.append('email', email);
+        formData.append('$source', 'Manual Download Page');
+
+        fetch('https://manage.kmail-lists.com/subscriptions/subscribe', {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData
+        })
+        .then(() => {
+            setTimeout(() => { showSuccess(); }, 1000);
+        })
+        .catch(() => {
+            setTimeout(() => { showSuccess(); }, 1000);
+        });
+    }
+
+    function showSuccess() {
+        document.getElementById('email-form-section').style.display = 'none';
+        document.getElementById('success-msg').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
